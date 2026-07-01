@@ -1,43 +1,89 @@
-﻿public class Node
+﻿using System;
+
+public class Node
 {
     public int Value;
-    public Node Left, Right;
+    public Node Left;
+    public Node Right;
+
     public Node(int value)
     {
         Value = value;
-        Left = Right = null;
     }
 }
-public class BinaryTree
+
+public class BinarySearchTree
 {
     public Node Root;
+
+    // Inserción iterativa para evitar llamadas recursivas innecesarias
     public void Insert(int value)
     {
+        Node newNode = new Node(value);
+
         if (Root == null)
-            Root = new Node(value);
-        else
-            InsertRecursive(Root, value);
+        {
+            Root = newNode;
+            return;
+        }
+
+        Node current = Root;
+
+        while (true)
+        {
+            if (value < current.Value)
+            {
+                if (current.Left == null)
+                {
+                    current.Left = newNode;
+                    return;
+                }
+
+                current = current.Left;
+            }
+            else if (value > current.Value)
+            {
+                if (current.Right == null)
+                {
+                    current.Right = newNode;
+                    return;
+                }
+
+                current = current.Right;
+            }
+            else
+            {
+                // Evita insertar valores duplicados
+                return;
+            }
+        }
     }
-    private void InsertRecursive(Node current, int value)
+
+    // Búsqueda eficiente O(h)
+    public bool Search(int value)
     {
-        if (value < current.Value)
+        Node current = Root;
+
+        while (current != null)
         {
-            if (current.Left == null)
-                current.Left = new Node(value);
+            if (value == current.Value)
+                return true;
+
+            if (value < current.Value)
+                current = current.Left;
             else
-                InsertRecursive(current.Left, value);
+                current = current.Right;
         }
-        else
-        {
-            if (current.Right == null)
-                current.Right = new Node(value);
-            else
-                InsertRecursive(current.Right, value);
-        }
+
+        return false;
     }
+
+    // Recorrido InOrder
     public void PrintInOrder(Node node)
     {
-        if (node == null) return;
+        if (node == null)
+            return;
+
         PrintInOrder(node.Left);
         Console.Write(node.Value + " ");
         PrintInOrder(node.Right);
